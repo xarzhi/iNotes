@@ -1,0 +1,23 @@
+html,
+body {
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  height: 100%;
+}
+#root {
+  height: 100%;
+  overflow: hidden;
+}
+* {
+  color: #333;
+}
+
+.App {
+  .top {
+    position: relative;
+  }
+  .app_contnet {
+    height: calc(100vh - 30px);
+  }
+}

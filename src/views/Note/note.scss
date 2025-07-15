@@ -1,0 +1,62 @@
+.note_box {
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+  background-color: #fff7d1;
+  overflow: hidden;
+  .edit_box {
+    flex: 1;
+    box-sizing: border-box;
+    padding-top: 5px;
+    padding-left: 10px;
+    outline: none;
+    height: 500px;
+    overflow-x: auto;
+    overflow-y: auto;
+    white-space: pre-wrap; /* 保留制表符和空格 */
+    padding-right: 5px;
+    margin-bottom: 5px;
+    &::-webkit-scrollbar {
+      cursor: default;
+      width: 5px;
+      height: 5px;
+      transition: all 2s;
+      cursor: default;
+    }
+    &::-webkit-scrollbar-thumb {
+      background: rgb(197, 204, 211);
+      border-radius: 5px;
+      cursor: default;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+      background: rgb(151, 156, 161);
+      cursor: default;
+    }
+    &::-webkit-scrollbar-track {
+      cursor: default;
+    }
+  }
+
+  .tool_box {
+    height: 40px;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    &::after {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 1px;
+      background-color: #b8b6b6;
+      top: 0;
+      left: 0;
+      transform: scaleY(0.5);
+    }
+  }
+}
+
+ul,
+ol {
+  padding-left: 20px;
+  margin: 5px 0;
+}

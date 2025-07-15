@@ -1,0 +1,43 @@
+.tool_box {
+  display: flex;
+
+  .option_btn {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff7d1;
+
+    border: none;
+    cursor: pointer;
+    &:hover {
+      background-color: #eceaea;
+    }
+    i.icon-wenzibeijing2 {
+      transform: scale(1.1, 1.15);
+    }
+    i.icon-wenziyanse2 {
+      transform: scale(1.1, 1.1);
+    }
+  }
+}
+
+i.icon-youxuliebiao3 {
+  transform: scale(1.1, 1.06);
+}
+
+.font_bg_btn {
+  width: 20px;
+  height: 20px;
+  text-align: center;
+  line-height: 20px;
+  font-size: 20px;
+  color: #333;
+  border-radius: 3px;
+}
+
+
+.font_color_btn{
+  border: 1px solid #000;
+}

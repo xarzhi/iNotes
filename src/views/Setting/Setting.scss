@@ -1,0 +1,29 @@
+.setting {
+    background-color: #fff7d1;
+    height: 100%;
+    padding: 10px;
+
+    .form_item {
+        display: flex;
+        align-items: center;
+        height: 30px;
+
+        .label {
+            position: relative;
+            width: fit-content;
+            padding: 0 10px;
+            margin-right: 10px;
+
+            &::after {
+                content: ':';
+                position: absolute;
+                right: 0;
+            }
+        }
+
+        .wrapper {
+            display: flex;
+            align-items: center;
+        }
+    }
+}
