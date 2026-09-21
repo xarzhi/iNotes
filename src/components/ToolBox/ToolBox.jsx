@@ -132,95 +132,82 @@ const ToolBox = (props) => {
   };
 
   return (
-    <div className="tool_box">
-      {/* 文字加粗 */}
-      <button
-        className="option_btn"
-        onClick={(e) => toolBtnClick(e, "bold", null)}
-        style={{ background: style.isBold ? "#eceaea" : "" }}
-      >
-        <i className="iconfont icon-bold"></i>
-      </button>
-      {/* 文字倾斜 */}
-      <button
-        className="option_btn"
-        onClick={(e) => toolBtnClick(e, "italic", null)}
-        style={{ background: style.isItalic ? "#eceaea" : "" }}
-      >
-        <i className="iconfont icon-qingxie"></i>
-      </button>
-      {/* 文字下划线 */}
-      <button
-        className="option_btn"
-        onClick={(e) => toolBtnClick(e, "underline", null)}
-        style={{ background: style.underline ? "#eceaea" : "" }}
-      >
-        <i className="iconfont icon-xiahuaxian2"></i>
-      </button>
-      {/* 文字删除线 */}
-      <button
-        className="option_btn"
-        onClick={(e) => toolBtnClick(e, "strikeThrough", null)}
-        style={{ background: style.lineThrough ? "#eceaea" : "" }}
-      >
-        <i className="iconfont icon-shanchuxian"></i>
-      </button>
-      {/* 无序列表 */}
-      <button
-        className="option_btn"
-        onClick={(e) => toolBtnClick(e, "insertUnorderedList", null)}
-      >
-        <i className="iconfont icon-list"></i>
-      </button>
-      {/* 有序列表 */}
-      <button
-        className="option_btn"
-        onClick={(e) => toolBtnClick(e, "insertOrderedList", null)}
-      >
-        <i className="iconfont icon-youxuliebiao3"></i>
-      </button>
-      {/* 文字颜色 */}
-      <ColorPicker
-        value={fontColor}
-        disabledAlpha
-        onChangeComplete={onFtChangeComplete}
-        onOpenChange={onOpenChange}
-        presets={presets}
-        trigger="hover"
-      >
-        <button className="option_btn font_color_btn">
-          <i
-            className="iconfont icon-wenziyanse2"
-            style={{ color: style.color ? style.color : "gray" }}
-          ></i>
-        </button>
-      </ColorPicker>
-      {/* 文字背景颜色 */}
-      <ColorPicker
-        value={bgColor}
-        onChangeComplete={onBgChangeComplete}
-        onOpenChange={onOpenChange}
-        disabledAlpha
-        presets={presets}
-        trigger="hover"
-      >
-        <button className="option_btn">
-          <span
-            style={{
-              background: style.bgColor
-                ? style.bgColor === "#FFF7D1"
-                  ? "#999"
-                  : style.bgColor
-                : "#999",
-            }}
-            className="font_bg_btn"
-          >
-            A
-          </span>
-        </button>
-      </ColorPicker>
-    </div>
-  );
+		<div className="tool_box">
+			{/* 文字加粗 */}
+			<button
+				className="option_btn"
+				onClick={e => toolBtnClick(e, 'bold', null)}
+				style={{ background: style.isBold ? '#eceaea' : '' }}
+			>
+				<i className="iconfont icon-bold"></i>
+			</button>
+			{/* 文字倾斜 */}
+			<button
+				className="option_btn"
+				onClick={e => toolBtnClick(e, 'italic', null)}
+				style={{ background: style.isItalic ? '#eceaea' : '' }}
+			>
+				<i className="iconfont icon-qingxie"></i>
+			</button>
+			{/* 文字下划线 */}
+			<button
+				className="option_btn"
+				onClick={e => toolBtnClick(e, 'underline', null)}
+				style={{ background: style.underline ? '#eceaea' : '' }}
+			>
+				<i className="iconfont icon-xiahuaxian1"></i>
+			</button>
+			{/* 文字删除线 */}
+			<button
+				className="option_btn"
+				onClick={e => toolBtnClick(e, 'strikeThrough', null)}
+				style={{ background: style.lineThrough ? '#eceaea' : '' }}
+			>
+				<i className="iconfont icon-shanchuxian"></i>
+			</button>
+			{/* 无序列表 */}
+			<button className="option_btn" onClick={e => toolBtnClick(e, 'insertUnorderedList', null)}>
+				<i className="iconfont icon-list"></i>
+			</button>
+			{/* 有序列表 */}
+			<button className="option_btn" onClick={e => toolBtnClick(e, 'insertOrderedList', null)}>
+				<i className="iconfont icon-youxuliebiao3"></i>
+			</button>
+			{/* 文字颜色 */}
+			<ColorPicker
+				value={fontColor}
+				disabledAlpha
+				onChangeComplete={onFtChangeComplete}
+				onOpenChange={onOpenChange}
+				presets={presets}
+				trigger="hover"
+			>
+				<button className="option_btn font_color_btn">
+					<i className="iconfont icon-wenziyanse3" style={{ color: style.color ? style.color : 'gray' }}></i>
+				</button>
+			</ColorPicker>
+			{/* 文字背景颜色 */}
+			<ColorPicker
+				value={bgColor}
+				onChangeComplete={onBgChangeComplete}
+				onOpenChange={onOpenChange}
+				disabledAlpha
+				presets={presets}
+				trigger="hover"
+			>
+				<button className="option_btn">
+					<span
+						style={{
+							background: style.bgColor ? (style.bgColor === '#FFF7D1' ? '#999' : style.bgColor) : '#999',
+						}}
+						className="font_bg_btn"
+					>
+						A
+					</span>
+				</button>
+			</ColorPicker>
+		</div>
+  )
 };
 
 export default ToolBox;

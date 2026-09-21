@@ -1,29 +1,456 @@
+// Fluent 2（WinUI 11 设置页）用的几个基础色
+$accent: #0f6cbd;
+$accent-hover: #115ea3;
+$text-primary: #1b1b1b;
+$text-secondary: #616161;
+$stroke-card: rgba(0, 0, 0, 0.0578);
+$stroke-control: rgba(0, 0, 0, 0.4458);
+$subtle-hover: rgba(0, 0, 0, 0.0373);
+
+// App.scss 里有全局的 `* { color: #333 }`，它会直接命中 svg 及其子元素，
+// 把 currentColor 冲掉，所以用到 svg 的地方都要显式继承一遍
+@mixin svg-inherit-color {
+    svg,
+    svg * {
+        color: inherit;
+    }
+}
+
 .setting {
-    background-color: #fff7d1;
     height: 100%;
-    padding: 10px;
+    box-sizing: border-box;
+    padding: 14px 16px 20px;
+    overflow-y: auto;
+    color: $text-primary;
+    // 和便签列表保持一致，切到设置页不改背景
+    background: #fff7d1;
+    font-family: 'Segoe UI Variable Text', 'Segoe UI', system-ui, -apple-system,
+        'Microsoft YaHei UI', sans-serif;
 
-    .form_item {
+    &::-webkit-scrollbar {
+        width: 6px;
+    }
+    &::-webkit-scrollbar-thumb {
+        background: rgba(0, 0, 0, 0.2);
+        border-radius: 3px;
+    }
+    &::-webkit-scrollbar-thumb:hover {
+        background: rgba(0, 0, 0, 0.35);
+    }
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .page_title {
+        margin: 2px 0 14px;
+        font-size: 20px;
+        font-weight: 600;
+        line-height: 26px;
+    }
+
+    // Fluent InfoBar（出错时用）
+    .info_bar {
         display: flex;
-        align-items: center;
-        height: 30px;
+        align-items: flex-start;
+        gap: 8px;
+        padding: 10px 12px;
+        margin-bottom: 10px;
+        border-radius: 6px;
+        background: #fde7e9;
+        border: 1px solid $stroke-card;
+        font-size: 13px;
+        line-height: 18px;
 
-        .label {
-            position: relative;
-            width: fit-content;
-            padding: 0 10px;
-            margin-right: 10px;
+        .info_bar_icon {
+            flex: 0 0 auto;
+            display: flex;
+            color: #c42b1c;
+            @include svg-inherit-color;
 
-            &::after {
-                content: ':';
-                position: absolute;
-                right: 0;
+            svg {
+                width: 18px;
+                height: 18px;
             }
         }
 
-        .wrapper {
+        .info_bar_text {
+            word-break: break-all;
+        }
+    }
+
+    // 注意：这里不能加 overflow: hidden，否则下面 ComboBox 的下拉弹层会被裁掉
+    .card {
+        // 和标题栏 top 同色
+        background: #fff2ab;
+        border: 1px solid $stroke-card;
+        border-radius: 6px;
+        box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .row {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+
+        &:first-child {
+            border-radius: 6px 6px 0 0;
+        }
+        &:last-child {
+            border-radius: 0 0 6px 6px;
+        }
+
+        // 行之间的发丝分隔线
+        & + .row::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 14px;
+            right: 14px;
+            height: 1px;
+            background: $stroke-card;
+        }
+
+        .row_icon {
+            flex: 0 0 auto;
+            display: flex;
+            color: $accent;
+            @include svg-inherit-color;
+
+            svg {
+                width: 20px;
+                height: 20px;
+            }
+        }
+
+        .row_text {
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .row_title {
+            font-size: 14px;
+            line-height: 20px;
+        }
+
+        .row_desc {
+            margin-top: 2px;
+            font-size: 12px;
+            line-height: 16px;
+            color: $text-secondary;
+
+            // 检查更新的结果
+            .is_ok {
+                color: $accent;
+            }
+
+            .is_error {
+                color: #c42b1c;
+            }
+        }
+
+        // 所有设置项的控件统一放在最右边
+        .row_control {
+            flex: 0 0 auto;
             display: flex;
             align-items: center;
+        }
+    }
+
+    .page_footer {
+        margin-top: 12px;
+        font-size: 12px;
+        line-height: 17px;
+        color: $text-secondary;
+    }
+
+    // 行里的小按钮（比如「检查更新」）
+    .setting_btn {
+        min-width: 84px;
+        height: 32px;
+        padding: 0 12px;
+        font-family: inherit;
+        font-size: 13px;
+        color: $text-primary;
+        background: #fff;
+        border: 1px solid $stroke-card;
+        border-bottom-color: $stroke-control;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.12s ease;
+
+        &:hover:not(:disabled) {
+            background: #fbfbfb;
+        }
+
+        &:active:not(:disabled) {
+            background: #f3f3f3;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $text-primary;
+            outline-offset: 1px;
+        }
+
+        &:disabled {
+            opacity: 0.45;
+            cursor: default;
+        }
+    }
+
+    // ---- 快捷键录入 ----
+    .shortcut {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+
+        .shortcut_btn {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            box-sizing: border-box;
+            // 和上面的 ComboBox 同宽，右边一排控件看起来才齐
+            min-width: 124px;
+            height: 32px;
+            padding: 0 11px;
+            font-family: inherit;
+            background: #fff;
+            border: 1px solid $stroke-card;
+            border-bottom-color: $stroke-control;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.12s ease, border-color 0.12s ease;
+
+            &:hover:not(:disabled) {
+                background: #fbfbfb;
+            }
+
+            &:focus-visible {
+                outline: 2px solid $text-primary;
+                outline-offset: 1px;
+            }
+
+            &:disabled {
+                opacity: 0.45;
+                cursor: default;
+            }
+
+            &.is_recording {
+                background: rgba(15, 108, 189, 0.06);
+                border-color: $accent;
+                border-bottom-color: $accent;
+            }
+        }
+
+        .shortcut_key {
+            display: inline-block;
+            padding: 1px 6px;
+            font-family: inherit;
+            font-size: 12px;
+            line-height: 16px;
+            color: $text-primary;
+            background: #f3f3f3;
+            border: 1px solid rgba(0, 0, 0, 0.08);
+            border-bottom-color: rgba(0, 0, 0, 0.2);
+            border-radius: 3px;
+        }
+
+        .shortcut_plus {
+            font-size: 11px;
+            color: $text-secondary;
+        }
+
+        .shortcut_recording {
+            font-size: 13px;
+            color: $accent;
+        }
+
+        // 录制中的短提示，宽度不超过按钮，不会把行撑开
+        .shortcut_hint {
+            font-size: 11px;
+            line-height: 14px;
+            color: $text-secondary;
+        }
+    }
+
+    // ---- Fluent ToggleSwitch ----
+    .fluent_switch {
+        position: relative;
+        flex: 0 0 auto;
+        box-sizing: border-box;
+        width: 40px;
+        height: 20px;
+        padding: 0;
+        border: 1px solid $stroke-control;
+        border-radius: 10px;
+        background: transparent;
+        cursor: pointer;
+        transition: background-color 0.12s ease, border-color 0.12s ease;
+
+        .fluent_switch_thumb {
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #5d5d5d;
+            transition: left 0.12s ease, background-color 0.12s ease;
+        }
+
+        &:hover:not(:disabled) {
+            background: $subtle-hover;
+        }
+
+        &.is_on {
+            background: $accent;
+            border-color: $accent;
+
+            .fluent_switch_thumb {
+                left: 23px;
+                background: #fff;
+            }
+
+            &:hover:not(:disabled) {
+                background: $accent-hover;
+                border-color: $accent-hover;
+            }
+        }
+
+        &:focus-visible {
+            outline: 2px solid $text-primary;
+            outline-offset: 2px;
+        }
+
+        &:disabled {
+            opacity: 0.45;
+            cursor: default;
+        }
+    }
+
+    // ---- Fluent ComboBox ----
+    .fluent_select {
+        position: relative;
+        flex: 0 0 auto;
+
+        &.is_disabled {
+            opacity: 0.45;
+            pointer-events: none;
+        }
+    }
+
+    .fluent_select_btn {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+        box-sizing: border-box;
+        min-width: 124px;
+        max-width: 150px;
+        height: 32px;
+        padding: 0 8px 0 11px;
+        font-family: inherit;
+        font-size: 14px;
+        line-height: 20px;
+        color: $text-primary;
+        text-align: left;
+        background: #fff;
+        // WinUI 的下边框比其它三边更实一点
+        border: 1px solid $stroke-card;
+        border-bottom-color: $stroke-control;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.12s ease;
+
+        &:hover:not(:disabled) {
+            background: #fbfbfb;
+        }
+
+        &:active:not(:disabled) {
+            background: #f5f5f5;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $text-primary;
+            outline-offset: 1px;
+        }
+
+        .fluent_select_value {
+            flex: 1 1 auto;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+
+        .fluent_select_chevron {
+            flex: 0 0 auto;
+            display: flex;
+            color: $text-secondary;
+            @include svg-inherit-color;
+
+            svg {
+                width: 12px;
+                height: 12px;
+            }
+        }
+    }
+
+    .fluent_select.is_open .fluent_select_btn {
+        background: #fff;
+    }
+
+    // 下拉弹层（Fluent Flyout）
+    .fluent_select_list {
+        position: absolute;
+        top: calc(100% + 4px);
+        // 右对齐，避免超出卡片右边
+        right: 0;
+        z-index: 20;
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        min-width: 100%;
+        padding: 4px;
+        background: #fffdf7;
+        border: 1px solid $stroke-card;
+        border-radius: 8px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.14);
+    }
+
+    .fluent_select_item {
+        position: relative;
+        display: flex;
+        align-items: center;
+        box-sizing: border-box;
+        height: 32px;
+        padding: 0 12px 0 16px;
+        font-size: 14px;
+        line-height: 20px;
+        white-space: nowrap;
+        border-radius: 4px;
+        cursor: pointer;
+
+        &.is_active {
+            background: $subtle-hover;
+        }
+
+        // WinUI 选中项左边那道强调色小竖条
+        &.is_selected {
+            font-weight: 600;
+
+            &::before {
+                content: '';
+                position: absolute;
+                left: 4px;
+                top: 50%;
+                width: 3px;
+                height: 16px;
+                margin-top: -8px;
+                border-radius: 2px;
+                background: $accent;
+            }
         }
     }
 }

@@ -169,3 +169,62 @@
 .renameInput{
   outline: none;
 }
+
+// 搜索命中的高亮（Home.jsx 只在文本节点上套这个 class）
+.search_hit {
+  background: yellow;
+}
+
+// 启动时检测到新版本的提示条
+.update_banner {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 6px 5px 0;
+  padding: 7px 10px;
+  box-sizing: border-box;
+  border-radius: 6px;
+  background: #e8f2fd;
+  border: 1px solid rgba(0, 0, 0, 0.0578);
+  font-size: 12px;
+  line-height: 16px;
+  color: #1b1b1b;
+
+  .update_banner_text {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+  }
+
+  .update_banner_btn {
+    flex: 0 0 auto;
+    height: 24px;
+    padding: 0 10px;
+    font-family: inherit;
+    font-size: 12px;
+    color: #fff;
+    background: #0f6cbd;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+      background: #115ea3;
+    }
+  }
+
+  .update_banner_close {
+    flex: 0 0 auto;
+    padding: 0 2px;
+    font-size: 15px;
+    line-height: 1;
+    color: #616161;
+    cursor: pointer;
+
+    &:hover {
+      color: #1b1b1b;
+    }
+  }
+}

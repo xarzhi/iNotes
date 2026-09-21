@@ -2,7 +2,7 @@
   display: flex;
   flex-flow: column;
   height: 100%;
-  background-color: #fff7d1;
+  background-color: var(--note-theme, #fff7d1);
   overflow: hidden;
   .edit_box {
     flex: 1;

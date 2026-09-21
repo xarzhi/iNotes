@@ -1,6 +1,6 @@
 .titlebar {
   height: 30px;
-  background: #fff2ab;
+  background: var(--note-top, #fff2ab);
 overflow: hidden;
   user-select: none;
   display: flex;
@@ -14,9 +14,20 @@ overflow: hidden;
       font-weight: 500;
     }
   }
+  // 左右两组各 3 个 30px 按钮，定宽才能让中间的标题真正居中
+  .left,
+  .right {
+    flex: 0 0 auto;
+    width: 90px;
+    display: flex;
+    align-items: center;
+  }
   .left {
     font-size: 20px;
     // padding-left: 5px;
+  }
+  .right {
+    justify-content: flex-end;
   }
 }
 .titlebar-button {
@@ -32,13 +43,46 @@ overflow: hidden;
   background: #e9e8e8;
 }
 
+// 便签标题：显示在标题栏正中间，点一下变成输入框改名
 .middle {
-  font-size: 14px;
-  padding: 2px 20px;
-  border-radius: 3px;
-  cursor: pointer;
-  &:hover {
-    background-color: #ddd;
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-sizing: border-box;
+
+  .middle_title {
+    max-width: 100%;
+    padding: 2px 8px;
+    font-size: 13px;
+    line-height: 18px;
+    color: #333;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.07);
+    }
+  }
+
+  .middle_input {
+    width: 100%;
+    height: 22px;
+    box-sizing: border-box;
+    padding: 0 6px;
+    font-family: inherit;
+    font-size: 13px;
+    text-align: center;
+    color: #333;
+    background: #fff;
+    border: 1px solid #0f6cbd;
+    border-radius: 4px;
+    outline: none;
   }
 }
 

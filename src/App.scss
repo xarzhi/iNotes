@@ -13,6 +13,13 @@ body {
   color: #333;
 }
 
+// 深色主题（目前只有 #767676）：#333 压在上面看不清，整棵子树翻成白色。
+// 用 .App.theme_dark 提高优先级，才能盖过下面各组件里自己写的 color
+.App.theme_dark,
+.App.theme_dark * {
+  color: #fff;
+}
+
 .App {
   .top {
     position: relative;

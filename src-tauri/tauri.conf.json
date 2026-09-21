@@ -12,10 +12,14 @@
   "app": {
     "windows": [
       {
+        "label": "main",
         "title": "inotes",
         "width": 360,
         "height": 630,
-        "decorations": false
+        "minWidth": 360,
+        "minHeight": 630,
+        "decorations": false,
+        "visible": false
       }
     ],
     "security": {

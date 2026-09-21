@@ -1,20 +1,20 @@
 import "./Note.scss";
 import { useRef, useEffect, useState, useMemo } from "react";
 import ToolBox from "@/components/ToolBox/ToolBox";
-import { useLocation } from "react-router-dom";
+import { useNote } from "@/context/NoteContext.jsx";
 import {
   readTextFile,
   writeTextFile,
   BaseDirectory,
 } from "@tauri-apps/plugin-fs";
 const NoteContent = () => {
-  const location = useLocation();
+  // 便签路径由 App 统一管理（标题改名后会变）
+  const { path } = useNote();
   const edit_box = useRef(null);
   const [style, setStyle] = useState({});
-  const { noteInfo } = location.state;
   const [content, setContent] = useState({});
   const init = async () => {
-    const content = await readTextFile(noteInfo.path, {
+    const content = await readTextFile(path, {
       baseDir: BaseDirectory.Resource,
     });
     setContent(content);
@@ -42,8 +42,8 @@ const NoteContent = () => {
     const b = parseInt(match[3], 10).toString(16).padStart(2, "0");
     const alpha = match[4]
       ? Math.round(parseFloat(match[4]) * 255)
-          .toString(16)
-          .padStart(2, "0")
+        .toString(16)
+        .padStart(2, "0")
       : "";
 
     return `#${r}${g}${b}${alpha}`.toUpperCase();
@@ -129,7 +129,7 @@ const NoteContent = () => {
   };
   const observe = () => {
     const observer = new MutationObserver(async (mutations) => {
-      await writeTextFile(noteInfo.path, edit_box.current.innerHTML, {
+      await writeTextFile(path, edit_box.current.innerHTML, {
         baseDir: BaseDirectory.Resource,
       });
     });

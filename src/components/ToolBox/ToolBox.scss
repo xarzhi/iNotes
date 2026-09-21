@@ -7,7 +7,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    background-color: #fff7d1;
+    background-color: var(--note-theme, #fff7d1);
 
     border: none;
     cursor: pointer;

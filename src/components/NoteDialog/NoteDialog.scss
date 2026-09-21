@@ -1,0 +1,197 @@
+// 和设置页同一套 Fluent 2 token
+$accent: #0f6cbd;
+$accent-hover: #115ea3;
+$text-primary: #1b1b1b;
+$text-secondary: #616161;
+$stroke-card: rgba(0, 0, 0, 0.0578);
+$stroke-control: rgba(0, 0, 0, 0.4458);
+$subtle-hover: rgba(0, 0, 0, 0.0373);
+
+.note_dialog_mask {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+    box-sizing: border-box;
+    background: rgba(0, 0, 0, 0.3);
+}
+
+.note_dialog {
+    width: 100%;
+    max-width: 290px;
+    box-sizing: border-box;
+    padding: 18px;
+    background: #fffdf7;
+    border: 1px solid $stroke-card;
+    border-radius: 8px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.22);
+
+    .note_dialog_title {
+        font-size: 17px;
+        font-weight: 600;
+        line-height: 24px;
+        color: $text-primary;
+        margin-bottom: 14px;
+    }
+
+    .note_dialog_field {
+        margin-bottom: 14px;
+    }
+
+    .note_dialog_label {
+        display: block;
+        font-size: 12px;
+        line-height: 16px;
+        color: $text-secondary;
+        margin-bottom: 5px;
+    }
+
+    .note_dialog_input {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        height: 32px;
+        padding: 0 11px;
+        font-family: inherit;
+        font-size: 14px;
+        color: $text-primary;
+        background: #fff;
+        border: 1px solid $stroke-card;
+        border-bottom-color: $stroke-control;
+        border-radius: 4px;
+        outline: none;
+
+        &::placeholder {
+            color: #9a9a9a;
+        }
+
+        &:hover {
+            background: #fbfbfb;
+        }
+
+        &:focus {
+            background: #fff;
+            border-color: $accent;
+            border-bottom-color: $accent;
+        }
+    }
+
+    // Fluent RadioButton（和设置页保持一致的观感）
+    .note_dialog_radio {
+        position: relative;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 5px 0;
+        font-size: 14px;
+        line-height: 20px;
+        color: $text-primary;
+        cursor: pointer;
+        user-select: none;
+
+        input {
+            position: absolute;
+            width: 0;
+            height: 0;
+            margin: 0;
+            opacity: 0;
+        }
+
+        .note_dialog_radio_mark {
+            position: relative;
+            flex: 0 0 auto;
+            box-sizing: border-box;
+            width: 20px;
+            height: 20px;
+            border: 1px solid $stroke-control;
+            border-radius: 50%;
+            transition: border-color 0.12s ease;
+
+            &::after {
+                content: '';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                width: 10px;
+                height: 10px;
+                margin: -5px 0 0 -5px;
+                border-radius: 50%;
+                background: $accent;
+                transform: scale(0);
+                transition: transform 0.12s ease;
+            }
+        }
+
+        &:hover .note_dialog_radio_mark {
+            border-color: #8a8a8a;
+        }
+
+        input:focus-visible + .note_dialog_radio_mark {
+            outline: 2px solid $text-primary;
+            outline-offset: 2px;
+        }
+
+        input:checked ~ .note_dialog_radio_mark {
+            border-color: $accent;
+
+            &::after {
+                transform: scale(1);
+            }
+        }
+
+        .note_dialog_radio_hint {
+            font-size: 12px;
+            color: $text-secondary;
+        }
+    }
+
+    .note_dialog_actions {
+        display: flex;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 18px;
+    }
+
+    .note_dialog_btn {
+        min-width: 76px;
+        height: 32px;
+        padding: 0 12px;
+        font-family: inherit;
+        font-size: 14px;
+        color: $text-primary;
+        background: #fff;
+        border: 1px solid $stroke-card;
+        border-bottom-color: $stroke-control;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.12s ease;
+
+        &:hover:not(:disabled) {
+            background: #f7f7f7;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $text-primary;
+            outline-offset: 1px;
+        }
+
+        &.is_primary {
+            color: #fff;
+            background: $accent;
+            border-color: $accent;
+
+            &:hover:not(:disabled) {
+                background: $accent-hover;
+                border-color: $accent-hover;
+            }
+        }
+
+        &:disabled {
+            opacity: 0.45;
+            cursor: default;
+        }
+    }
+}
