@@ -1,6 +1,7 @@
 import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { DEFAULT_SETTINGS, getSettings, saveSettings } from "@/utils/settings";
-import { CURRENT_VERSION, REPO_URL, checkForUpdate } from "@/utils/version";
+import { CURRENT_VERSION, RELEASES_URL, checkForUpdate } from "@/utils/version";
+import { openUrl } from "@tauri-apps/plugin-opener";
 import "./Setting.scss";
 
 const PowerIcon = () => (
@@ -54,6 +55,14 @@ const RefreshIcon = () => (
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
     <path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10" />
     <path d="M23 4v6h-6" />
+  </svg>
+);
+
+const DownloadIcon = () => (
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+    <path d="M7 10l5 5 5-5" />
+    <path d="M12 15V3" />
   </svg>
 );
 
@@ -350,6 +359,14 @@ const Setting = () => {
     }
   };
 
+  const openReleases = async () => {
+    try {
+      await openUrl(RELEASES_URL);
+    } catch (e) {
+      console.error("[inotes] 打开 release 页面失败", e);
+    }
+  };
+
   const update = async (patch) => {
     if (!settings || saving) return;
 
@@ -485,6 +502,21 @@ const Setting = () => {
               disabled={checking}
             >
               {checking ? "检查中…" : "检查更新"}
+            </button>
+          </div>
+        </div>
+
+        <div className="row">
+          <span className="row_icon">
+            <DownloadIcon />
+          </span>
+          <div className="row_text">
+            <div className="row_title">Release 页面</div>
+            <div className="row_desc">在 GitHub 上查看并下载新版本</div>
+          </div>
+          <div className="row_control">
+            <button type="button" className="setting_btn" onClick={openReleases}>
+              打开
             </button>
           </div>
         </div>

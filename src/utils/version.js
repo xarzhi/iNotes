@@ -5,6 +5,8 @@ import manifest from "../../version.json";
 export const CURRENT_VERSION = manifest.version;
 
 export const REPO_URL = "https://github.com/xarzhi/iNotes";
+// 下载新版本要去 release 页
+export const RELEASES_URL = `${REPO_URL}/releases`;
 
 const BRANCH = "main";
 const REPO_PATH = "xarzhi/iNotes";

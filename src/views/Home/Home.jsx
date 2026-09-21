@@ -1,5 +1,5 @@
 import "./home.scss";
-import { useState, useEffect, useMemo } from "react";
+import { Fragment, useState, useEffect, useMemo, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Dropdown, message } from "antd";
 import {
@@ -10,9 +10,9 @@ import {
   remove
 } from "@tauri-apps/plugin-fs";
 import { openNoteWindow } from "@/utils/noteWindow";
-import { noteTitleFromPath } from "@/utils/noteFile";
+import { noteTitleFromPath, isTempNote, renameNoteFile } from "@/utils/noteFile";
 import { DEFAULT_SETTINGS, getSettings } from "@/utils/settings";
-import { REPO_URL, checkForUpdate } from "@/utils/version";
+import { RELEASES_URL, checkForUpdate } from "@/utils/version";
 import { openUrl } from "@tauri-apps/plugin-opener";
 
 const items = [
@@ -21,10 +21,28 @@ const items = [
     key: "openWindow",
   },
   {
+    label: "修改文件名",
+    key: "rename",
+  },
+  {
     label: "删除",
     key: "delete",
   },
 ];
+
+// 纯文本高亮：标题是文件名，直接用 React 节点拼，不碰 HTML
+function highlightText(text, keyword) {
+  const source = String(text ?? "");
+  if (!keyword || !source.includes(keyword)) return source;
+
+  const parts = source.split(keyword);
+  return parts.map((part, index) => (
+    <Fragment key={index}>
+      {index > 0 ? <span className="search_hit">{keyword}</span> : null}
+      {part}
+    </Fragment>
+  ));
+}
 
 async function getFileDetails(path) {
   const stats = await stat(path, {
@@ -44,6 +62,7 @@ async function getFileDetails(path) {
     path,
     // 只剥掉已知后缀，标题里带点（比如 v1.2）也不会被截断
     title: noteTitleFromPath(path),
+    isTemp: isTempNote(path),
     createTime: new Date(stats.birthtime).toLocaleString(), // 创建时间
     updateTime: new Date(stats.mtime).toLocaleString(), // 修改时间
     content,
@@ -92,12 +111,31 @@ function highlightHtml(html, keyword) {
   return root.innerHTML;
 }
 
+// 临时便签的标记图标（本地 iconfont 里没有时钟类图标，所以用内联 SVG）
+const TempIcon = () => (
+  <svg
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+  >
+    <circle cx="12" cy="12" r="9" />
+    <path d="M12 7.5V12l3 2" />
+  </svg>
+);
+
 const Home = () => {
   const navigate = useNavigate();
   const [searchText, setSearchText] = useState("");
   const [topShaow, setTopShaow] = useState("");
   const [noteList, setNoteList] = useState([]);
   const [latestVersion, setLatestVersion] = useState("");
+  // 正在改名的便签路径（同时只允许一条）
+  const [renamingPath, setRenamingPath] = useState("");
+  const renameRef = useRef(null);
+  const cancelRenameRef = useRef(false);
 
   // 搜索结果是直接从 noteList 派生的，不再单独存一份 searchList：
   // 原来用 useEffect([searchText]) 同步，noteList 变了（比如删完便签重新 init）
@@ -191,9 +229,38 @@ const Home = () => {
 
   const openRepo = async () => {
     try {
-      await openUrl(REPO_URL);
+      await openUrl(RELEASES_URL);
     } catch (e) {
-      console.error("[inotes] 打开仓库地址失败", e);
+      console.error("[inotes] 打开 release 页面失败", e);
+    }
+  };
+
+  const startRename = (item) => {
+    cancelRenameRef.current = false;
+    setRenamingPath(item.path);
+    // 等输入框渲染出来再聚焦
+    setTimeout(() => {
+      renameRef.current?.focus();
+      renameRef.current?.select();
+    }, 0);
+  };
+
+  const finishRename = async (item) => {
+    if (renamingPath !== item.path) return;
+
+    const nextTitle = renameRef.current?.value ?? "";
+    const cancelled = cancelRenameRef.current;
+    cancelRenameRef.current = false;
+    setRenamingPath("");
+
+    if (cancelled || nextTitle.trim() === item.title) return;
+
+    try {
+      await renameNoteFile(item.path, nextTitle);
+      init();
+    } catch (e) {
+      console.error("[inotes] 修改文件名失败", e);
+      message.error("修改文件名失败");
     }
   };
 
@@ -205,6 +272,8 @@ const Home = () => {
         console.error("[inotes] 打开新窗口失败", e);
         message.error("打开新窗口失败");
       }
+    } else if (opt.key === "rename") {
+      startRename(item);
     } else if (opt.key === "delete") {
       await remove(item.path, {
         baseDir: BaseDirectory.Resource,
@@ -265,8 +334,52 @@ const Home = () => {
                 <div
                   className="note"
                   key={item.path}
-                  onClick={() => noteClick(item)}
+                  onClick={() => {
+                    // 改名途中点卡片其它地方 = 提交，不跳转
+                    if (renamingPath === item.path) {
+                      finishRename(item);
+                      return;
+                    }
+                    noteClick(item);
+                  }}
                 >
+                  {renamingPath === item.path ? (
+                    <input
+                      ref={renameRef}
+                      className="note_title_input"
+                      defaultValue={item.title}
+                      maxLength={40}
+                      aria-label="便签文件名"
+                      onClick={(e) => e.stopPropagation()}
+                      onBlur={() => finishRename(item)}
+                      onKeyDown={(e) => {
+                        e.stopPropagation();
+                        if (e.key === "Enter") {
+                          e.preventDefault();
+                          finishRename(item);
+                        } else if (e.key === "Escape") {
+                          e.preventDefault();
+                          cancelRenameRef.current = true;
+                          renameRef.current?.blur();
+                        }
+                      }}
+                    />
+                  ) : (
+                    <div className="note_title_row">
+                      <div className="note_title">
+                        {highlightText(item.title, keyword)}
+                      </div>
+                      {item.isTemp ? (
+                        <span
+                          className="note_temp"
+                          title="临时便签：关闭程序后自动删除"
+                          aria-label="临时便签"
+                        >
+                          <TempIcon />
+                        </span>
+                      ) : null}
+                    </div>
+                  )}
                   <div
                     className="note_content"
                     dangerouslySetInnerHTML={{ __html: item.content }}

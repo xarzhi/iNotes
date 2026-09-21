@@ -1,20 +1,12 @@
 import { useCallback, useMemo, useState } from "react";
 import { useLocation, useRoutes } from "react-router-dom";
-import { BaseDirectory, rename } from "@tauri-apps/plugin-fs";
 import routes from "./router/router.jsx";
 import DragTop from "@/components/DragTop/DragTop.jsx";
 import Note from "@/views/Note/Note.jsx";
 import { NoteContext } from "@/context/NoteContext.jsx";
 import { getNotePathFromUrl, getNoteThemeFromUrl } from "@/utils/noteWindow";
 import { darkerShade, isDarkColor } from "@/utils/theme";
-import {
-  isTempNote,
-  listNoteTitles,
-  notePathFor,
-  noteTitleFromPath,
-  sanitizeTitle,
-  uniqueTitle,
-} from "@/utils/noteFile";
+import { noteTitleFromPath, renameNoteFile } from "@/utils/noteFile";
 
 import "./App.scss";
 function App() {
@@ -44,21 +36,10 @@ function App() {
   const renameNote = useCallback(
     async (rawTitle) => {
       if (!notePath) return;
-
-      const next = sanitizeTitle(rawTitle);
-      // 清空标题不合法，直接当作没改
-      if (!next || next === noteTitleFromPath(notePath)) return;
-
-      const used = new Set(await listNoteTitles());
-      used.delete(noteTitleFromPath(notePath));
-
-      const nextPath = notePathFor(uniqueTitle(next, used), isTempNote(notePath));
-      await rename(notePath, nextPath, {
-        oldPathBaseDir: BaseDirectory.Resource,
-        newPathBaseDir: BaseDirectory.Resource,
-      });
-
-      setPathState((prev) => ({ ...prev, path: nextPath }));
+      const nextPath = await renameNoteFile(notePath, rawTitle);
+      if (nextPath !== notePath) {
+        setPathState((prev) => ({ ...prev, path: nextPath }));
+      }
     },
     [notePath]
   );

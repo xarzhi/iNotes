@@ -91,14 +91,62 @@
       margin-bottom: 10px;
       position: relative;
 
+      // 便签标题 = 文件名，右上角要给「更多」按钮留位置
+      .note_title_row {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding-right: 28px;
+      }
+
       .note_title {
+        // 不撑满：临时标记要紧跟在标题后面，而不是被推到最右边像个按钮
+        flex: 0 1 auto;
+        min-width: 0;
         font-weight: bold;
         color: #333;
-        max-width: 200px;
         white-space: nowrap;
         text-overflow: ellipsis;
         overflow: hidden;
       }
+
+      // 临时便签标记
+      .note_temp {
+        flex: 0 0 auto;
+        display: inline-flex;
+        align-items: center;
+        color: #b06a00;
+        cursor: default;
+
+        // App.scss 的 `* { color: #333 }` 会直接命中 svg 及其子元素，
+        // 把 currentColor 冲掉，所以要连子元素一起显式继承
+        svg,
+        svg * {
+          color: inherit;
+        }
+
+        svg {
+          width: 13px;
+          height: 13px;
+        }
+      }
+
+      .note_title_input {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        height: 24px;
+        padding: 0 6px;
+        font-family: inherit;
+        font-size: 14px;
+        font-weight: bold;
+        color: #333;
+        background: #fff;
+        border: 1px solid #0f6cbd;
+        border-radius: 4px;
+        outline: none;
+      }
+
       .note_content {
         font-size: 14px;
         margin-top: 5px;

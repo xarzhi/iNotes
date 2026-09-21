@@ -1,4 +1,4 @@
-import { BaseDirectory, readDir } from "@tauri-apps/plugin-fs";
+import { BaseDirectory, readDir, rename } from "@tauri-apps/plugin-fs";
 
 export const NOTE_DIR = "AppData";
 // 临时便签用文件名后缀标记：单一事实来源，重启后依然认得出来，
@@ -66,4 +66,21 @@ export function uniqueTitle(base, usedTitles) {
     if (!usedTitles.has(candidate)) return candidate;
   }
   return `${base}${Date.now()}`;
+}
+
+// 重命名便签文件：保留临时便签的 .tmp 标记、自动避开撞名。
+// 返回新的路径（没改或改不成就返回原路径）
+export async function renameNoteFile(path, rawTitle) {
+  const next = sanitizeTitle(rawTitle);
+  if (!next || next === noteTitleFromPath(path)) return path;
+
+  const used = new Set(await listNoteTitles());
+  used.delete(noteTitleFromPath(path));
+
+  const nextPath = notePathFor(uniqueTitle(next, used), isTempNote(path));
+  await rename(path, nextPath, {
+    oldPathBaseDir: BaseDirectory.Resource,
+    newPathBaseDir: BaseDirectory.Resource,
+  });
+  return nextPath;
 }
